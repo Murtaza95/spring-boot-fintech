@@ -35,6 +35,10 @@ public class ExceptionHandler {
             errorMessage =e.getMessage() ;
             status = HttpStatus.NOT_ACCEPTABLE;
         }
+        else if (e instanceof InvalidAmountException) {
+            errorMessage =e.getMessage() ;
+            status = HttpStatus.NOT_ACCEPTABLE;
+        }
         else if (e instanceof TransactionException) {
             errorMessage =e.getMessage() ;
             status = HttpStatus.INTERNAL_SERVER_ERROR;

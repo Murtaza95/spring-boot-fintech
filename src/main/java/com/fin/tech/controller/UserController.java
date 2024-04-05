@@ -28,7 +28,6 @@ import com.fin.tech.command.JwtResponse;
 import com.fin.tech.command.UserCommand;
 import com.fin.tech.exception.ExceptionHandler;
 import com.fin.tech.jwt.JwtTokenUtil;
-import com.fin.tech.jwt.JwtUtil;
 import com.fin.tech.model.Person;
 import com.fin.tech.repository.UserRepository;
 import com.fin.tech.service.UserAuthenticationService;

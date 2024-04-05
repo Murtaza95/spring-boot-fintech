@@ -1,5 +1,6 @@
 package com.fin.tech.controller;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -7,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fin.tech.command.TransactionCommand;
 import com.fin.tech.exception.ExceptionHandler;
+import com.fin.tech.exception.InsufficientBalanceException;
 import com.fin.tech.model.Person;
 import com.fin.tech.repository.UserRepository;
 import com.fin.tech.service.TransactionService;
@@ -25,8 +29,6 @@ public class TransactionController {
 	@Autowired
 	private TransactionService transactionService;
 	
-	@Autowired
-	private UserRepository userRepository;
 
 	@PostMapping("/transfer")
 	public ResponseEntity<?> transferAmount(@RequestBody TransactionCommand cmd) {
@@ -37,8 +39,6 @@ public class TransactionController {
 			}
 			
 			transactionService.initiateTransaction(cmd);
-			List<Person> persons = userRepository.findAll();
-			System.out.println(persons);
 		} 
 		catch (Exception e) {
 			Map<String, Object> errorResponse = ExceptionHandler.buildErrorResponse(e);

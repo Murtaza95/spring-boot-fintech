@@ -15,7 +15,9 @@
 	<name>FintechApplication</name>
 	<description>FintechApplication</description>
 	<properties>
-		<java.version>17</java.version>
+		<java.version>1.8</java.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
 
 	<dependencies>
@@ -84,6 +86,16 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M5</version>
+				<configuration>
+					<includes>
+						<include>com/fin/tech/test/**/*.java</include>
+					</includes>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

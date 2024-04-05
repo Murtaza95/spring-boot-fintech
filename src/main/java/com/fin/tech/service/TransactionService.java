@@ -30,8 +30,8 @@ public class TransactionService {
 	public void initiateTransaction(TransactionCommand cmd) {
 		List<Person> persons = userRepository.findAll();
 		try {
-			final Person debitUser = userAuthenticationService.authenticateByEmail(cmd.getFromEmail());
-			final Person creditUser = userAuthenticationService.authenticateByEmail(cmd.getToEmail());
+			 Person debitUser = userAuthenticationService.authenticateByEmail(cmd.getFromEmail());
+			 Person creditUser = userAuthenticationService.authenticateByEmail(cmd.getToEmail());
 			// Check if debit user has sufficient balance
 			if (debitUser.getBalance().compareTo(cmd.getAmount()) < 0) {
 				throw new InsufficientBalanceException("Insufficient balance");

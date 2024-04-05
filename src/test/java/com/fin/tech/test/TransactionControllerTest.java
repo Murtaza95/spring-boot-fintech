@@ -1,4 +1,5 @@
 package com.fin.tech.test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -13,12 +14,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.web.servlet.MockMvc;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fin.tech.command.TransactionCommand;
 import com.fin.tech.controller.TransactionController;
 import com.fin.tech.exception.InsufficientBalanceException;
+import com.fin.tech.exception.InvalidAmountException;
 import com.fin.tech.exception.TransactionException;
 import com.fin.tech.model.Person;
 import com.fin.tech.repository.UserRepository;
@@ -27,70 +30,99 @@ import com.fin.tech.service.UserAuthenticationService;
 
 @ExtendWith(MockitoExtension.class)
 public class TransactionControllerTest {
+	private static final Logger logger = LoggerFactory.getLogger(UserControllerTest.class);
+	
+	@Mock
+	private UserRepository userRepository;
 
-    private MockMvc mockMvc;
-    
-    @Mock
-    private UserRepository userRepository;
+	@Mock
+	private UserAuthenticationService userAuthenticationService;
 
-    @Mock
-    private UserAuthenticationService userAuthenticationService;
+	@InjectMocks
+	private TransactionService transactionService;
 
-    @InjectMocks
-    private TransactionService transactionService;
+	@InjectMocks
+	private TransactionController transactionController;
 
-    @InjectMocks
-    private TransactionController transactionController;
+	@BeforeEach
+	public void setup() {
+		MockitoAnnotations.initMocks(this);
+	}
 
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-    }
-    
+	@Test
+	public void testTransferAmountInsufficientBalance() throws Exception {
+		logger.info("Started the testTransferAmountInsufficientBalance test case");
+		TransactionCommand cmd = new TransactionCommand();
+		cmd.setFromEmail("debit@example.com");
+		cmd.setToEmail("credit@example.com");
+		cmd.setAmount(new BigDecimal("1000"));
 
-    @Test
-    public void testTransferAmount_InsufficientBalance() throws Exception {
+		Person debitUser = new Person();
+		debitUser.setEmail("debit@example.com");
+		debitUser.setBalance(new BigDecimal("500"));
+
+		// Mock credit user
+		Person creditUser = new Person();
+		creditUser.setEmail("credit@example.com");
+		creditUser.setBalance(new BigDecimal("1000"));
+
+		when(userRepository.findAll()).thenReturn(new ArrayList<>());
+		when(userAuthenticationService.authenticateByEmail("debit@example.com")).thenReturn(debitUser);
+		when(userAuthenticationService.authenticateByEmail("credit@example.com")).thenReturn(creditUser);
+
+		InsufficientBalanceException exception = assertThrows(InsufficientBalanceException.class, () -> {
+			transactionService.initiateTransaction(cmd);
+		});
+
+		// Assert the exception message
+		assertEquals("Insufficient balance", exception.getMessage());
+		logger.info("Completed the testTransferAmountInsufficientBalance test case");
+	}
+
+	@Test
+	public void testTransferAmountExceptionThrown() {
+		logger.info("Started the testTransferAmountExceptionThrown test case");
+		TransactionCommand cmd = new TransactionCommand();
+		cmd.setFromEmail("debit@example.com");
+		cmd.setToEmail("credit@example.com");
+		cmd.setAmount(new BigDecimal("100"));
+
+		TransactionException exception = assertThrows(TransactionException.class, () -> {
+			transactionService.initiateTransaction(cmd);
+		});
+
+		assertEquals("There is an error while doing the transaction. Your transaction is reverted.",
+				exception.getMessage());
+		logger.info("Finished the testTransferAmountExceptionThrown test case");
+	}
+	
+	@Test
+    public void testInitiateTransaction_InvalidAmountException() throws Exception {
+		logger.info("Started the testInitiateTransaction_InvalidAmountException test case");
         TransactionCommand cmd = new TransactionCommand();
         cmd.setFromEmail("debit@example.com");
         cmd.setToEmail("credit@example.com");
-        cmd.setAmount(new BigDecimal("1000"));
-
-        Person debitUser = new Person();
-        debitUser.setEmail("debit@example.com");
-        debitUser.setBalance(new BigDecimal("500"));
+        cmd.setAmount(new BigDecimal("-100")); 
         
-        // Mock credit user
-        Person creditUser = new Person();
-        creditUser.setEmail("credit@example.com");
-        creditUser.setBalance(new BigDecimal("1000"));
+        Person debitUser = new Person();
+		debitUser.setEmail(cmd.getFromEmail());
+		debitUser.setBalance(new BigDecimal("100"));
 
-        when(userRepository.findAll()).thenReturn(new ArrayList<>());
-        when(userAuthenticationService.authenticateByEmail("debit@example.com")).thenReturn(debitUser);
-        when(userAuthenticationService.authenticateByEmail("credit@example.com")).thenReturn(creditUser);
+		// Mock credit user
+		Person creditUser = new Person();
+		creditUser.setEmail(cmd.getToEmail());
+		creditUser.setBalance(new BigDecimal("100"));
 
-        InsufficientBalanceException exception = assertThrows(InsufficientBalanceException.class, () -> {
-            transactionService.initiateTransaction(cmd);
-        });
+		when(userRepository.findAll()).thenReturn(new ArrayList<>());
+		when(userAuthenticationService.authenticateByEmail(debitUser.getEmail())).thenReturn(debitUser);
+		when(userAuthenticationService.authenticateByEmail(creditUser.getEmail())).thenReturn(creditUser);
 
-        // Assert the exception message
-        assertEquals("Insufficient balance", exception.getMessage());
+        InvalidAmountException exception = assertThrows(InvalidAmountException.class, () -> {
+			transactionService.initiateTransaction(cmd);
+		});
+
+		assertEquals("Invalid amount.",exception.getMessage());
+		logger.info("Finished the testInitiateTransaction_InvalidAmountException test case");
     }
 
-    @Test
-    public void testTransferAmount_ExceptionThrown() {
-        TransactionCommand cmd = new TransactionCommand();
-        cmd.setFromEmail("debit@example.com");
-        cmd.setToEmail("credit@example.com");
-        cmd.setAmount(new BigDecimal("100"));
-
-
-        TransactionException exception = assertThrows(TransactionException.class, () -> {
-            transactionService.initiateTransaction(cmd);
-        });
-
-        assertEquals("There is an error while doing the transaction. Your transaction is reverted.", exception.getMessage());
-    }
-    private String asJsonString(Object object) throws Exception {
-        return new ObjectMapper().writeValueAsString(object);
-    }
 }

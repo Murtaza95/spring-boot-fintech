@@ -40,8 +40,8 @@ class AuthenticationControllerTest {
     private UserController userController;
 
     @Test
-    void testCreateAuthenticationToken_Success() throws Exception {
-    	logger.info("Started the token success test case.");
+    void testCreateAuthenticationTokenSuccess() throws Exception {
+    	logger.info("Started the testCreateAuthenticationToken_Success test case.");
         UserCommand authenticationRequest = new UserCommand();
         authenticationRequest.setEmail("test@example.com");
         authenticationRequest.setPassword("password");
@@ -63,12 +63,12 @@ class AuthenticationControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(authenticationRequest)))
                 .andExpect(status().isOk());
-        logger.info("Finished the token success test case.");
+        logger.info("Finished the testCreateAuthenticationToken_Success  test case.");
     }
 
     @Test
-    void testCreateAuthenticationToken_Failure() throws Exception {
-    	logger.info("Started the token failure test case.");
+    void testCreateAuthenticationTokenFailure() throws Exception {
+    	logger.info("Started the testCreateAuthenticationToken_Failure test case.");
         UserCommand authenticationRequest = new UserCommand();
         authenticationRequest.setEmail("test@example.com");
         authenticationRequest.setPassword("password");
@@ -86,7 +86,7 @@ class AuthenticationControllerTest {
                 .content(asJsonString(authenticationRequest)))
                 .andExpect(status().isUnauthorized())
                 .andExpect(content().json("{'error': 'Invalid credentials'}"));
-        logger.info("Finished the token failure test case.");
+        logger.info("Finished the testCreateAuthenticationToken_Failure test case.");
     }
 
     // Utility method to convert object to JSON string

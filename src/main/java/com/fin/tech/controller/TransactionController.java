@@ -2,6 +2,8 @@ package com.fin.tech.controller;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,10 +51,9 @@ public class TransactionController {
 			@ApiResponse(code = 406, message = "Invalid amount."),
 			@ApiResponse(code = 406, message = "Insufficient balance"),
 			@ApiResponse(code = 500, message = "There is an error while doing the transaction. Your transaction is reverted."), })
-	public ResponseEntity<?> transferAmount(@RequestBody TransactionCommand cmd) {
+	public ResponseEntity<?> transferAmount(@RequestBody TransactionCommand cmd,HttpSession session) {
 		try {
-			if (cmd.getFromEmail() == null || cmd.getFromEmail().isEmpty() || cmd.getToEmail() == null
-					|| cmd.getToEmail().isEmpty() || cmd.getAmount() == null) {
+			if  (cmd.getToEmail() == null || cmd.getToEmail().isEmpty() || cmd.getAmount() == null) {
 				return ResponseEntity.badRequest().body("From Email, To Email and Transfer amount is mandatory.");
 			}
 

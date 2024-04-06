@@ -3,6 +3,8 @@ package com.fin.tech.controller;
 import java.math.BigDecimal;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,7 +107,7 @@ public class UserController {
 			@ApiResponse(code = 401, message = "Invalid credentials"),
 			@ApiResponse(code = 406, message = "User not found"),
 			@ApiResponse(code = 401, message = "Unauthorized"), })
-	public ResponseEntity<?> createAuthenticationToken(@RequestBody UserCommand authenticationRequest) {
+	public ResponseEntity<?> createAuthenticationToken(@RequestBody UserCommand authenticationRequest,HttpSession session) {
 		try {
 
 			final Person userDetails = userAuthenticationService.authenticate(authenticationRequest.getEmail(),

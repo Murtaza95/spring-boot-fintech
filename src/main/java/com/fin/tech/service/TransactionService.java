@@ -3,8 +3,12 @@ package com.fin.tech.service;
 import java.math.BigDecimal;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -14,6 +18,7 @@ import com.fin.tech.command.TransactionCommand;
 import com.fin.tech.exception.InsufficientBalanceException;
 import com.fin.tech.exception.InvalidAmountException;
 import com.fin.tech.exception.TransactionException;
+import com.fin.tech.exception.UnauthorizedUserException;
 import com.fin.tech.model.Person;
 import com.fin.tech.repository.UserRepository;
 
@@ -34,7 +39,18 @@ public class TransactionService {
 	@Transactional(rollbackFor = {TransactionException.class, Exception.class})
 	public void initiateTransaction(TransactionCommand cmd) {
 		try {
-			 Person debitUser = userAuthenticationService.authenticateByEmail(cmd.getFromEmail());
+			 Person debitUser = null;
+			 UserDetails userDetails = null;
+			  Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			 if (authentication != null && authentication.isAuthenticated()) {
+		            userDetails = (UserDetails) authentication.getPrincipal();
+		        } else {
+		            // Handle unauthenticated access
+		        	throw new UnauthorizedUserException("User not authenticated");
+		        }
+			 
+			 
+			 debitUser = userAuthenticationService.authenticateByEmail(userDetails.getUsername());
 			 Person creditUser = userAuthenticationService.authenticateByEmail(cmd.getToEmail());
 			// Check if debit user has sufficient balance
 			if (debitUser.getBalance().compareTo(cmd.getAmount()) < 0) {

@@ -2,11 +2,12 @@ package com.fin.tech.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-
+import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +17,8 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fin.tech.command.TransactionCommand;
@@ -48,11 +51,21 @@ public class TransactionControllerTest {
 
 	@InjectMocks
 	private TransactionController transactionController;
+	
+	
+	@Before
+    public void authentication_setup() {
+        // Mock authentication
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.isAuthenticated()).thenReturn(true);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
 
 	@BeforeEach
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
 	}
+	
 
 	@Test
 	public void testTransferAmountInsufficientBalance() throws Exception {
@@ -118,7 +131,6 @@ public class TransactionControllerTest {
 		creditUser.setEmail(cmd.getToEmail());
 		creditUser.setBalance(new BigDecimal("100"));
 
-		when(userRepository.findAll()).thenReturn(new ArrayList<>());
 		when(userAuthenticationService.authenticateByEmail(debitUser.getEmail())).thenReturn(debitUser);
 		when(userAuthenticationService.authenticateByEmail(creditUser.getEmail())).thenReturn(creditUser);
 

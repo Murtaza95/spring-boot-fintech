@@ -43,6 +43,12 @@ public class ExceptionHandler {
             errorMessage =e.getMessage() ;
             status = HttpStatus.NOT_ACCEPTABLE;
         }
+        else if (e instanceof UnauthorizedUserException) {
+            errorMessage =e.getMessage() ;
+            status = HttpStatus.UNAUTHORIZED;
+        }
+        
+        
         else if (e instanceof TransactionException) {
             errorMessage =e.getMessage() ;
             status = HttpStatus.INTERNAL_SERVER_ERROR;

@@ -1,4 +1,4 @@
-package com.fin.tech.config;
+package com.fin.tech.security;
 
 import javax.persistence.EntityManagerFactory;
 
@@ -28,6 +28,11 @@ import com.fin.tech.service.UserAuthenticationService;
 
 @Configuration
 @EnableWebSecurity
+/**
+ * 
+ * @author Murtaza Gillani
+ *
+ */
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
@@ -42,29 +47,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
-	    // We don't need CSRF for this example
 	    httpSecurity.csrf().disable()
 	            // Permit access to these particular requests without authentication
 	            .authorizeRequests()
-	                .antMatchers("/users/login", "/users/register").permitAll()
+	            .antMatchers("/users/login", "/users/register", "/swagger-resources/**", "/swagger-ui/**", "/v2/api-docs/**", "/v3/api-docs.yaml", "/v3/api-docs.json").permitAll() // Permit access to Swagger UI resources
 	                .anyRequest().authenticated()
 	                .and()
-	            // Configure exception handling for unauthorized requests
+	            //exception handling for unauthorized requests
 	            .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
 	            .and()
 	            // Configure session management to be stateless
 	            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-	    // Add a filter to validate the tokens with every request
+	    // Filter to validate the tokens with every request
 	    httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 	}
 
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		// configure AuthenticationManager so that it knows from where to load
-		// user for matching credentials
-		// Use BCryptPasswordEncoder
 		auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
 	}
 	@Bean

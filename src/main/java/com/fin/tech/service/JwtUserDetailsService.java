@@ -13,6 +13,11 @@ import org.springframework.stereotype.Service;
 import com.fin.tech.model.Person;
 import com.fin.tech.repository.UserRepository;
 
+/**
+ * 
+ * @author Murtaza Gillani
+ *
+ */
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
 	

@@ -2,7 +2,11 @@ package com.fin.tech.command;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
+/**
+ * 
+ * @author Murtaza Gillani
+ *
+ */
 public class JwtResponse {
 	 private String token;
 	 private String issuedAt;

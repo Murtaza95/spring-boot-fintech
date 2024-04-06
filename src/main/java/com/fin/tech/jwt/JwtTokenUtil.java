@@ -19,6 +19,11 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
+/**
+ * 
+ * @author Murtaza Gillani
+ *
+ */
 @Component
 public class JwtTokenUtil implements Serializable {
 
@@ -56,7 +61,6 @@ public class JwtTokenUtil implements Serializable {
 	}
 
 	private Boolean ignoreTokenExpiration(String token) {
-		// here you specify tokens, for that the expiration is ignored
 		return false;
 	}
 

@@ -24,6 +24,11 @@ import com.fin.tech.jwt.JwtTokenUtil;
 import com.fin.tech.model.Person;
 import com.fin.tech.service.UserAuthenticationService;
 
+/**
+ * 
+ * @author Murtaza Gillani
+ *
+ */
 @ExtendWith(MockitoExtension.class)
 class AuthenticationControllerTest {
 	private static final Logger logger = LoggerFactory.getLogger(AuthenticationControllerTest.class);

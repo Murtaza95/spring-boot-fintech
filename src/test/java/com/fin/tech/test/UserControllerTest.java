@@ -30,6 +30,11 @@ import com.fin.tech.command.UserCommand;
 import com.fin.tech.controller.UserController;
 import com.fin.tech.repository.UserRepository;
 
+/**
+ * 
+ * @author Murtaza Gillani
+ *
+ */
 @ExtendWith(MockitoExtension.class)
 public class UserControllerTest {
 	private static final Logger logger = LoggerFactory.getLogger(UserControllerTest.class);

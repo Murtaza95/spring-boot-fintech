@@ -1,4 +1,4 @@
-package com.fin.tech.config;
+package com.fin.tech.security;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -11,6 +11,11 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 @Component
+/**
+ * 
+ * @author Murtaza Gillani
+ *
+ */
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Serializable {
 
 	private static final long serialVersionUID = -7858869558953243875L;

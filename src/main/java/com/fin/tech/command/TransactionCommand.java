@@ -1,7 +1,11 @@
 package com.fin.tech.command;
 
 import java.math.BigDecimal;
-
+/**
+ * 
+ * @author Murtaza Gillani
+ *
+ */
 public class TransactionCommand {
 	private String fromEmail;
 	private BigDecimal amount;

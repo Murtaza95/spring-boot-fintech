@@ -7,7 +7,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.HashMap;
 import java.util.Map;
-
+/**
+ * 
+ * @author Murtaza Gillani
+ *
+ */
 public class ExceptionHandler {
 
     public static Map<String, Object> buildErrorResponse(Exception e) {

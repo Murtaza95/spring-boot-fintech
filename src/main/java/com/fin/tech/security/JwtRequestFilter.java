@@ -1,4 +1,4 @@
-package com.fin.tech.config;
+package com.fin.tech.security;
 
 import java.io.IOException;
 
@@ -21,6 +21,11 @@ import com.fin.tech.service.JwtUserDetailsService;
 import io.jsonwebtoken.ExpiredJwtException;
 
 @Component
+/**
+ * 
+ * @author Murtaza Gillani
+ *
+ */
 public class JwtRequestFilter extends OncePerRequestFilter {
 
 	@Autowired
@@ -36,8 +41,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 		final String requestTokenHeader = request.getHeader("Authorization");
 		String username = null;
 		String jwtToken = null;
-		// JWT Token is in the form "Bearer token". Remove Bearer word and get only the
-		// Token
 		if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
 			jwtToken = requestTokenHeader.substring(7);
 			try {
@@ -48,7 +51,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 				System.out.println("JWT Token has expired");
 			}
 		}
-		if (request.getRequestURI().equals("/login") || request.getRequestURI().equals("/register")) {
+		if (request.getRequestURI().equals("/users/login") || request.getRequestURI().equals("/transactions/register")) {
 			logger.info(String.format("User trying to access the endpoint %s",request.getRequestURI().equals("/login")? "/login": "/register"));
 		} else {
 			logger.warn("JWT Token does not begin with Bearer String");

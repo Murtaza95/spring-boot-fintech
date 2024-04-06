@@ -1,5 +1,10 @@
 package com.fin.tech.command;
 
+/**
+ * 
+ * @author Murtaza Gillani
+ *
+ */
 public class UserCommand {
 	private String name;
     private String email;

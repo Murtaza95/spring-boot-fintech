@@ -12,6 +12,11 @@ import com.fin.tech.exception.UserNotFoundException;
 import com.fin.tech.model.Person;
 import com.fin.tech.repository.UserRepository;
 
+/**
+ * 
+ * @author Murtaza Gillani
+ *
+ */
 public class UserAuthenticationService {
 
 	@Autowired

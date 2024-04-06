@@ -17,6 +17,11 @@ import com.fin.tech.exception.TransactionException;
 import com.fin.tech.model.Person;
 import com.fin.tech.repository.UserRepository;
 
+/**
+ * 
+ * @author Murtaza Gillani
+ *
+ */
 @Service
 public class TransactionService {
 
@@ -28,7 +33,6 @@ public class TransactionService {
 
 	@Transactional(rollbackFor = {TransactionException.class, Exception.class})
 	public void initiateTransaction(TransactionCommand cmd) {
-		List<Person> persons = userRepository.findAll();
 		try {
 			 Person debitUser = userAuthenticationService.authenticateByEmail(cmd.getFromEmail());
 			 Person creditUser = userAuthenticationService.authenticateByEmail(cmd.getToEmail());
@@ -47,7 +51,6 @@ public class TransactionService {
 			// Update credit user balance
 			creditUser.setBalance(creditUser.getBalance().add(cmd.getAmount()));
 			userRepository.save(creditUser);
-			List<Person> persons2 = userRepository.findAll();
 		} 
 		catch (InsufficientBalanceException e) {
 			throw e;

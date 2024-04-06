@@ -6,8 +6,11 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.fin.tech.model.Person;
-
+/**
+ * 
+ * @author Murtaza Gillani
+ *
+ */
 public interface UserRepository extends JpaRepository<Person, Long> {
 	Optional<Person> findByEmail(String email);
-	List<Person> findAll();
 }

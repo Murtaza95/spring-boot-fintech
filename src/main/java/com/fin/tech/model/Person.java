@@ -12,6 +12,11 @@ import javax.persistence.Id;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+/**
+ * 
+ * @author Murtaza Gillani
+ *
+ */
 @Entity
 public class Person  implements UserDetails  {
     @Id

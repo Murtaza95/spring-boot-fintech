@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fin.tech.command.TransactionCommand;
@@ -52,15 +53,6 @@ public class TransactionControllerTest {
 	@InjectMocks
 	private TransactionController transactionController;
 	
-	
-	@Before
-    public void authentication_setup() {
-        // Mock authentication
-        Authentication authentication = mock(Authentication.class);
-        when(authentication.isAuthenticated()).thenReturn(true);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
-
 	@BeforeEach
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
@@ -70,6 +62,7 @@ public class TransactionControllerTest {
 	@Test
 	public void testTransferAmountInsufficientBalance() throws Exception {
 		logger.info("Started the testTransferAmountInsufficientBalance test case");
+		setupMockAuthentiation();
 		TransactionCommand cmd = new TransactionCommand();
 		cmd.setFromEmail("debit@example.com");
 		cmd.setToEmail("credit@example.com");
@@ -84,7 +77,6 @@ public class TransactionControllerTest {
 		creditUser.setEmail("credit@example.com");
 		creditUser.setBalance(new BigDecimal("1000"));
 
-		when(userRepository.findAll()).thenReturn(new ArrayList<>());
 		when(userAuthenticationService.authenticateByEmail("debit@example.com")).thenReturn(debitUser);
 		when(userAuthenticationService.authenticateByEmail("credit@example.com")).thenReturn(creditUser);
 
@@ -117,6 +109,7 @@ public class TransactionControllerTest {
 	@Test
     public void testInitiateTransaction_InvalidAmountException() throws Exception {
 		logger.info("Started the testInitiateTransaction_InvalidAmountException test case");
+		setupMockAuthentiation();
         TransactionCommand cmd = new TransactionCommand();
         cmd.setFromEmail("debit@example.com");
         cmd.setToEmail("credit@example.com");
@@ -141,5 +134,21 @@ public class TransactionControllerTest {
 		assertEquals("Invalid amount.",exception.getMessage());
 		logger.info("Finished the testInitiateTransaction_InvalidAmountException test case");
     }
+	
+	private void setupMockAuthentiation() {
+		 // Mock authentication
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.isAuthenticated()).thenReturn(true);
+        
+        // Mock UserDetails
+        UserDetails userDetails = mock(UserDetails.class);
+        when(authentication.getPrincipal()).thenReturn(userDetails);
+
+        // Mock UserDetails.getEmail() to return the expected email
+        when(userDetails.getUsername()).thenReturn("debit@example.com");
+
+        // Set up SecurityContextHolder to return the mock authentication
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+	}
 
 }
